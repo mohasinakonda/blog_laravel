@@ -5,12 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Review extends Model
+class Comment extends Model
 {
     use HasFactory;
-    protected $fillable = ['review', 'rating'];
-    public function book()
+    protected $fillable = ['comment', 'rating'];
+    public function blog()
     {
-        $this->belongsTo('book');
+        $this->belongsTo('blog');
     }
 }

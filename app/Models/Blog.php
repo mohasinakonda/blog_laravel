@@ -5,13 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Book extends Model
+class Blog extends Model
 {
     use HasFactory;
     protected $fillable = ['title', 'excerpt', 'description', 'author'];
-    public function reviews()
+    public function comment()
     {
-        $this->hasMany('review');
+        $this->hasMany('comment');
     }
     public function user()
     {

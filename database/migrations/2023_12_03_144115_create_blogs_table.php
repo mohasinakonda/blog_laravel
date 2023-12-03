@@ -10,13 +10,13 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('reviews', function (Blueprint $table) {
+        Schema::create('blogs', function (Blueprint $table) {
             $table->id();
-            $table->text('review');
-            $table->tinyInteger('rating');
-            $table->foreignId('book_id')->constrained()->cascadeOnDelete();
+            $table->string('title');
+            $table->string('author');
+            $table->string('excerpt');
+            $table->text('description');
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-
             $table->timestamps();
         });
     }
@@ -26,6 +26,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('reviews');
+        Schema::dropIfExists('books');
     }
 };
