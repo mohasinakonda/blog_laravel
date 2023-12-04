@@ -11,6 +11,7 @@ class Comment extends Model
     protected $fillable = ['comment', 'rating'];
     public function blog()
     {
-        $this->belongsTo('blog');
+        return $this->belongsTo(Blog::class);
     }
+
 }
