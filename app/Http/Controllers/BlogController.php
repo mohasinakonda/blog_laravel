@@ -13,10 +13,11 @@ class BlogController extends Controller
      */
     public function index(User $user)
     {
-        $data = $user->blogs()->with('user')->withCount('comment')->withAvg('comment', 'rating')->with('comment')->get();
+        $data = $user->blogs()->with('user')->withCount('comment')->withAvg('comment', 'rating')->with('comment')->paginate(10);
 
         return inertia::render('Blog', [
-            'blogs' => $data
+            'blogs' => $data,
+            'user' => $user,
         ]);
     }
 
