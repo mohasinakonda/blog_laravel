@@ -1,10 +1,19 @@
 import { ChatIcon } from "@/Components/icons/chat";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
+import { Blog as BlogProps, User } from "@/types/blog-type";
 import { Link } from "@inertiajs/react";
 import React from "react";
 type Props = {
-    auth: any;
-    blogs: any;
+    auth: {
+        user: User;
+    };
+    blogs: {
+        data: BlogProps[];
+        prev_page_url: string;
+        next_page_url: string;
+        current_page: number;
+        last_page: number;
+    };
 };
 const Blog = ({ auth, blogs }: Props) => {
     const rating = (rating: number) => {
