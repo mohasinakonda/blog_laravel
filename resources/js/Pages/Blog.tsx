@@ -53,9 +53,12 @@ const Blog = ({ auth, blogs }: Props) => {
                                 <p className="py-5 text-gray-500">
                                     {blog.excerpt}
                                     {"... "}
-                                    <button className="font-bold">
+                                    <Link
+                                        href={`/user/${auth.user.id}/blog/${blog.id}`}
+                                        className="font-bold"
+                                    >
                                         read more
-                                    </button>
+                                    </Link>
                                 </p>
                                 <div className="flex gap-1">
                                     <ChatIcon />
