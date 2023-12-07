@@ -6,6 +6,7 @@ import ResponsiveNavLink from "@/Components/ResponsiveNavLink";
 import { Link, router } from "@inertiajs/react";
 import { User } from "@/types";
 import { Blog } from "@/types/blog-type";
+import { ThreeDotFade } from "@/Components/icons/three-dot-fade";
 
 export default function Authenticated({
     user,
@@ -17,18 +18,26 @@ export default function Authenticated({
     const [timeOutFn, setTimeOutFn] = useState<NodeJS.Timeout>();
     const [searchResult, setSearchResult] = useState<Blog[]>([]);
     const [query, setQuery] = useState<string>("");
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     const searchData = (event: ChangeEvent<HTMLInputElement>) => {
         const query = event.target.value;
         setQuery(query);
         clearTimeout(timeOutFn);
-        if (query.length > 2)
+        if (query.length > 2) {
             setTimeOutFn(
                 setTimeout(() => {
+                    setIsLoading(true);
                     fetch(`/search?query=${query}`)
                         .then((res) => res.json())
-                        .then((data) => setSearchResult(data));
+                        .then((data) => {
+                            setSearchResult(data);
+                            setIsLoading(false);
+                        });
                 }, 1000)
             );
+        } else {
+            setSearchResult([]);
+        }
     };
 
     return (
@@ -60,6 +69,12 @@ export default function Authenticated({
                                 type="text"
                                 placeholder="Search"
                             />
+                            {isLoading && (
+                                <div className="absolute top-2 right-3">
+                                    <ThreeDotFade />
+                                </div>
+                            )}
+
                             {searchResult.length > 0 && (
                                 <ul className="absolute top-10 border left-0 w-full max-h-[450px] overflow-auto bg-white shadow-lg py-5">
                                     {searchResult.map((blog: Blog) => (
