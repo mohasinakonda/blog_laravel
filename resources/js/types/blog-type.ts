@@ -21,6 +21,7 @@ export type Blog = {
     created_at: string;
     updated_at: string;
     user_id: number;
+    comment_avg_rating: number;
+    comment_count: number;
     user: User;
-    comments: Comment[];
 };

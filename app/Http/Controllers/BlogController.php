@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Blog;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -13,7 +14,7 @@ class BlogController extends Controller
      */
     public function index(User $user)
     {
-        $data = $user->blogs()->with('user')->withCount('comment')->withAvg('comment', 'rating')->with('comment')->paginate(10);
+        $data = $user->blogs()->with('user')->withCount('comment')->withAvg('comment', 'rating')->paginate(10);
 
         return inertia::render('Blog', [
             'blogs' => $data,
@@ -40,9 +41,17 @@ class BlogController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(User $user, Blog $blog)
     {
-        //
+        $blog = Blog::where('id', $blog->id)->withCount('comment')->withAvg('comment', 'rating')->first();
+        $comments = $blog->comment()->with('user')->paginate(10);
+
+        return Inertia('Content', [
+            'auth' => $user,
+            'blog' => $blog,
+            'comments' => $comments
+        ]);
+        ;
     }
 
     /**
