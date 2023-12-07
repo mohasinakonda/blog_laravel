@@ -1,10 +1,11 @@
-import { useState, PropsWithChildren, ReactNode } from "react";
+import { useState, PropsWithChildren, ReactNode, ChangeEvent } from "react";
 import ApplicationLogo from "@/Components/ApplicationLogo";
 import Dropdown from "@/Components/Dropdown";
 import NavLink from "@/Components/NavLink";
 import ResponsiveNavLink from "@/Components/ResponsiveNavLink";
-import { Link } from "@inertiajs/react";
+import { Link, router } from "@inertiajs/react";
 import { User } from "@/types";
+import { Blog } from "@/types/blog-type";
 
 export default function Authenticated({
     user,
@@ -13,6 +14,22 @@ export default function Authenticated({
 }: PropsWithChildren<{ user: User; header?: ReactNode }>) {
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);
+    const [timeOutFn, setTimeOutFn] = useState<NodeJS.Timeout>();
+    const [searchResult, setSearchResult] = useState<Blog[]>([]);
+    const [query, setQuery] = useState<string>("");
+    const searchData = (event: ChangeEvent<HTMLInputElement>) => {
+        const query = event.target.value;
+        setQuery(query);
+        clearTimeout(timeOutFn);
+        if (query.length > 2)
+            setTimeOutFn(
+                setTimeout(() => {
+                    fetch(`/search?query=${query}`)
+                        .then((res) => res.json())
+                        .then((data) => setSearchResult(data));
+                }, 1000)
+            );
+    };
 
     return (
         <div className="min-h-screen bg-gray-100">
@@ -35,12 +52,55 @@ export default function Authenticated({
                                 </NavLink>
                             </div>
                         </div>
-                        <div className="w-[650px]">
+                        <div className="w-[650px] relative">
                             <input
+                                onChange={searchData}
+                                name="search"
                                 className="w-full h-10 border border-gray-300 rounded focus:ring-0"
                                 type="text"
                                 placeholder="Search"
                             />
+                            {searchResult.length > 0 && (
+                                <ul className="absolute top-10 border left-0 w-full max-h-[450px] overflow-auto bg-white shadow-lg py-5">
+                                    {searchResult.map((blog: Blog) => (
+                                        <li
+                                            key={blog.id}
+                                            className="w-full px-4 border-b rounded cursor-pointer border-b-gray-300 hover:bg-gray-100"
+                                            onClick={() => {
+                                                setSearchResult([]);
+                                                router.visit(
+                                                    `/user/${blog.user_id}/blog/${blog.id}`
+                                                );
+                                            }}
+                                        >
+                                            <p
+                                                className="text-lg font-medium text-gray-400"
+                                                dangerouslySetInnerHTML={{
+                                                    __html: blog.title.replace(
+                                                        new RegExp(
+                                                            `(${query})`,
+                                                            "gi"
+                                                        ),
+                                                        '<mark class="font-bold bg-transparent">$&</mark>'
+                                                    ),
+                                                }}
+                                            />
+                                            <p
+                                                className="text-sm font-medium text-gray-400"
+                                                dangerouslySetInnerHTML={{
+                                                    __html: blog.excerpt.replace(
+                                                        new RegExp(
+                                                            `(${query})`,
+                                                            "gi"
+                                                        ),
+                                                        '<mark class="font-bold bg-transparent">$&</mark>'
+                                                    ),
+                                                }}
+                                            />
+                                        </li>
+                                    ))}
+                                </ul>
+                            )}
                         </div>
                         <div className="hidden sm:flex sm:items-center sm:ms-6">
                             <div className="relative ms-3">
