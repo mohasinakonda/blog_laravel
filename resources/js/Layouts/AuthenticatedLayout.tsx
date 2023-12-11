@@ -84,12 +84,12 @@ export default function Authenticated({
                                             onClick={() => {
                                                 setSearchResult([]);
                                                 router.visit(
-                                                    `/user/${blog.user_id}/blog/${blog.id}`
+                                                    `/blog/${blog.id}`
                                                 );
                                             }}
                                         >
                                             <p
-                                                className="text-lg font-medium text-gray-400"
+                                                className="text-lg font-medium text-gray-500"
                                                 dangerouslySetInnerHTML={{
                                                     __html: blog.title.replace(
                                                         new RegExp(
@@ -101,7 +101,7 @@ export default function Authenticated({
                                                 }}
                                             />
                                             <p
-                                                className="text-sm font-medium text-gray-400"
+                                                className="text-sm font-medium text-gray-500"
                                                 dangerouslySetInnerHTML={{
                                                     __html: blog.excerpt.replace(
                                                         new RegExp(
