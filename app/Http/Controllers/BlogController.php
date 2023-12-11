@@ -14,7 +14,7 @@ class BlogController extends Controller
      */
     public function index(User $user)
     {
-        $data = $user->blogs()->with('user')->withCount('comment')->withAvg('comment', 'rating')->paginate(10);
+        $data = Blog::with('user')->withCount('comment')->withAvg('comment', 'rating')->paginate(10);
 
         return inertia::render('Blog', [
             'blogs' => $data,
@@ -41,13 +41,12 @@ class BlogController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(User $user, Blog $blog)
+    public function show(Blog $blog)
     {
-        $blog = Blog::where('id', $blog->id)->withCount('comment')->withAvg('comment', 'rating')->first();
+        $blog = Blog::where('id', $blog->id)->with('user')->withCount('comment')->withAvg('comment', 'rating')->first();
         $comments = $blog->comment()->with('user')->paginate(10);
 
         return Inertia('Content', [
-            'auth' => $user,
             'blog' => $blog,
             'comments' => $comments
         ]);

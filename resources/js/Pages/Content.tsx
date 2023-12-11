@@ -2,10 +2,14 @@ import { ChatIcon } from "@/Components/icons/chat";
 import { Blog, Comment, User } from "@/types/blog-type";
 import { Link } from "@inertiajs/react";
 
+type BlogWithUser = Blog & {
+    user: User;
+};
+
 type Props = {
     auth: User;
 
-    blog: Blog;
+    blog: BlogWithUser;
     comments: {
         data: Comment[];
         prev_page_url: string;
@@ -32,7 +36,7 @@ const Content = ({ auth, blog, comments }: Props) => {
             <div className="max-w-2xl px-5 pt-20 mx-auto bg-white ">
                 <h2 className="py-5 text-3xl">{blog.title}</h2>
                 <p>
-                    Author : <span className="font-bold">{auth.name}</span>
+                    Author : <span className="font-bold">{blog.user.name}</span>
                 </p>
                 <div className="flex gap-5 py-2">
                     <div className="flex gap-1">

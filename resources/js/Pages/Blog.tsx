@@ -16,6 +16,7 @@ type Props = {
     };
 };
 const Blog = ({ auth, blogs }: Props) => {
+    console.log(blogs);
     const rating = (rating: number) => {
         const ratingToNumber = Math.round(rating);
         let rat = "";
@@ -54,7 +55,7 @@ const Blog = ({ auth, blogs }: Props) => {
                                     {blog.excerpt}
                                     {"... "}
                                     <Link
-                                        href={`/user/${auth.user.id}/blog/${blog.id}`}
+                                        href={`/blog/${blog.id}`}
                                         className="font-bold"
                                     >
                                         read more

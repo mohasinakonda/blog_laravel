@@ -19,19 +19,14 @@ use Inertia\Inertia;
 */
 
 Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
+    return redirect()->route('blog.index');
 });
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::resource('user.blog', BlogController::class)->scoped(['user'])->middleware(['auth']);
+Route::resource('blog', BlogController::class);
 Route::get('/search', SearchController::class)->name('search');
 
 Route::middleware('auth')->group(function () {
