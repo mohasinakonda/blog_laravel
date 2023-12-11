@@ -1,8 +1,13 @@
+import { BookmarkIcon } from "@/Components/icons/bookmark-icon";
 import { ChatIcon } from "@/Components/icons/chat";
+import { CopyToClipboardIcon } from "@/Components/icons/copy-to-clipboard-icon";
+import { EditIcon } from "@/Components/icons/edit-icon";
+import { ThreeDots } from "@/Components/icons/three-dots";
+import { TrashIcon } from "@/Components/icons/trash-icon";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import { Blog as BlogProps, User } from "@/types/blog-type";
 import { Link } from "@inertiajs/react";
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 type Props = {
     auth: {
         user: User;
@@ -16,7 +21,8 @@ type Props = {
     };
 };
 const Blog = ({ auth, blogs }: Props) => {
-    console.log(blogs);
+    const [showActionId, setShowActionId] = useState<number | string>("");
+    const actionRef = useRef<HTMLDivElement | null>(null);
     const rating = (rating: number) => {
         const ratingToNumber = Math.round(rating);
         let rat = "";
@@ -29,15 +35,35 @@ const Blog = ({ auth, blogs }: Props) => {
         }
         return rat;
     };
+    useEffect(() => {
+        const hideOutSiteClick = () => {
+            if (actionRef.current) {
+                setShowActionId("");
+            }
+        };
+        document.addEventListener("mousedown", hideOutSiteClick);
+        return () =>
+            document.removeEventListener("mousedown", hideOutSiteClick);
+    }, []);
     return (
         <Authenticated user={auth.user}>
             <div className="max-w-2xl mx-auto">
                 {blogs.data.length > 0 &&
-                    blogs.data.map((blog: any) => (
-                        <div key={blog.id}>
+                    blogs.data.map((blog: BlogProps, index) => (
+                        <div key={blog.id} className="relative group">
                             <div className="p-5 mt-5 bg-white shadow">
-                                <h2 className="py-4 text-xl font-medium">
+                                <h2 className="flex justify-between py-4 text-xl font-medium">
                                     {blog.title}
+                                    <button
+                                        onClick={() =>
+                                            setShowActionId((prev) =>
+                                                prev ? "" : blog.id
+                                            )
+                                        }
+                                        className="hidden px-0.5  border rounded-full group-hover:block bg-gray-50 focus:ring-1"
+                                    >
+                                        <ThreeDots />
+                                    </button>
                                 </h2>
                                 by -<cite>{blog.user.name}</cite>
                                 <p>
@@ -71,6 +97,29 @@ const Blog = ({ auth, blogs }: Props) => {
                                     </Link>
                                 </div>
                             </div>
+                            {showActionId === blog.id && (
+                                <div
+                                    ref={actionRef}
+                                    className="absolute right-0 bg-white border rounded top-16"
+                                >
+                                    <ul className="w-40 text-gray-500 divide-y">
+                                        <li className="flex justify-between py-1.5 px-1 hover:bg-gray-100 cursor-pointer">
+                                            <span>Copy URL</span>{" "}
+                                            <CopyToClipboardIcon />
+                                        </li>
+                                        <li className="flex justify-between py-1.5 px-1  hover:bg-gray-100 cursor-pointer">
+                                            <span>Bookmark</span>{" "}
+                                            <BookmarkIcon />
+                                        </li>
+                                        <li className="flex justify-between py-1.5 px-1 hover:bg-gray-100 cursor-pointer">
+                                            <span>Edit</span> <EditIcon />
+                                        </li>
+                                        <li className="flex justify-between py-1.5 px-1 text-red-300 hover:bg-gray-100 cursor-pointer">
+                                            <span>Delete</span> <TrashIcon />
+                                        </li>
+                                    </ul>
+                                </div>
+                            )}
                         </div>
                     ))}
                 <div className="flex justify-center gap-1 py-5">
