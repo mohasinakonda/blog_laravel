@@ -36,8 +36,11 @@ const Blog = ({ auth, blogs }: Props) => {
         return rat;
     };
     useEffect(() => {
-        const hideOutSiteClick = () => {
-            if (actionRef.current) {
+        const hideOutSiteClick = (event: MouseEvent) => {
+            if (
+                actionRef.current &&
+                !actionRef.current.contains(event.target as Node)
+            ) {
                 setShowActionId("");
             }
         };
@@ -49,7 +52,7 @@ const Blog = ({ auth, blogs }: Props) => {
         <Authenticated user={auth.user}>
             <div className="max-w-2xl mx-auto">
                 {blogs.data.length > 0 &&
-                    blogs.data.map((blog: BlogProps, index) => (
+                    blogs.data.map((blog: BlogProps) => (
                         <div key={blog.id} className="relative group">
                             <div className="p-5 mt-5 bg-white shadow">
                                 <h2 className="flex justify-between py-4 text-xl font-medium">
@@ -103,20 +106,29 @@ const Blog = ({ auth, blogs }: Props) => {
                                     className="absolute right-0 bg-white border rounded top-16"
                                 >
                                     <ul className="w-40 text-gray-500 divide-y">
-                                        <li className="flex justify-between py-1.5 px-1 hover:bg-gray-100 cursor-pointer">
+                                        <button
+                                            onClick={() => {
+                                                const content_url = `${window.location.origin}/blog/${blog.id}`;
+                                                navigator.clipboard.writeText(
+                                                    content_url
+                                                );
+                                                setShowActionId("");
+                                            }}
+                                            className="flex justify-between py-1.5 px-1 hover:bg-gray-100 w-full"
+                                        >
                                             <span>Copy URL</span>{" "}
                                             <CopyToClipboardIcon />
-                                        </li>
+                                        </button>
                                         <li className="flex justify-between py-1.5 px-1  hover:bg-gray-100 cursor-pointer">
                                             <span>Bookmark</span>{" "}
                                             <BookmarkIcon />
                                         </li>
-                                        <li className="flex justify-between py-1.5 px-1 hover:bg-gray-100 cursor-pointer">
+                                        <button className="flex justify-between py-1.5 px-1 hover:bg-gray-100  w-full">
                                             <span>Edit</span> <EditIcon />
-                                        </li>
-                                        <li className="flex justify-between py-1.5 px-1 text-red-300 hover:bg-gray-100 cursor-pointer">
+                                        </button>
+                                        <button className="flex justify-between py-1.5 px-1 text-red-300 hover:bg-gray-100 w-full">
                                             <span>Delete</span> <TrashIcon />
-                                        </li>
+                                        </button>
                                     </ul>
                                 </div>
                             )}
