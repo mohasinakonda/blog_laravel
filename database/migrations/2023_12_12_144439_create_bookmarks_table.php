@@ -14,7 +14,7 @@ return new class extends Migration {
     {
         Schema::create('bookmarks', function (Blueprint $table) {
             $table->id();
-            $table->boolean('status')->default(false);
+            $table->boolean('status')->nullable();
             $table->foreignId('blog_id')->constrained();
             $table->foreignId('user_id')->constrained();
             $table->timestamps();

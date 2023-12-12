@@ -12,7 +12,11 @@ export type Comment = {
     blog_id: number;
     user: User;
 };
-
+export type BookMark = {
+    user_id: number;
+    blog_id: number;
+    status?: boolean | undefined;
+};
 export type Blog = {
     id: number;
     title: string;
@@ -24,4 +28,5 @@ export type Blog = {
     comment_avg_rating: number;
     comment_count: number;
     user: User;
+    bookmark?: BookMark | undefined;
 };

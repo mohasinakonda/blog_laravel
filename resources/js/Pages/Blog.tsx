@@ -7,6 +7,7 @@ import { TrashIcon } from "@/Components/icons/trash-icon";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import { Blog as BlogProps, User } from "@/types/blog-type";
 import { Link } from "@inertiajs/react";
+import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
 type Props = {
     auth: {
@@ -22,6 +23,7 @@ type Props = {
 };
 const Blog = ({ auth, blogs }: Props) => {
     const [showActionId, setShowActionId] = useState<number | string>("");
+
     const actionRef = useRef<HTMLDivElement | null>(null);
     const rating = (rating: number) => {
         const ratingToNumber = Math.round(rating);
@@ -48,6 +50,22 @@ const Blog = ({ auth, blogs }: Props) => {
         return () =>
             document.removeEventListener("mousedown", hideOutSiteClick);
     }, []);
+
+    const handleBookMark = async (
+        user_id: number,
+        blog_id: number,
+        status?: boolean
+    ) => {
+        const data = { user_id, blog_id, status: status ? false : true };
+        const response = await axios.post(
+            `/user/${user_id}/blog/${blog_id}/bookmark`,
+            {
+                ...data,
+            }
+        );
+
+        console.log(response.data);
+    };
     return (
         <Authenticated user={auth.user}>
             <div className="max-w-2xl mx-auto">
@@ -119,10 +137,19 @@ const Blog = ({ auth, blogs }: Props) => {
                                             <span>Copy URL</span>{" "}
                                             <CopyToClipboardIcon />
                                         </button>
-                                        <li className="flex justify-between py-1.5 px-1  hover:bg-gray-100 cursor-pointer">
+                                        <button
+                                            onClick={() =>
+                                                handleBookMark(
+                                                    blog.user_id,
+                                                    blog.id,
+                                                    blog?.bookmark?.status
+                                                )
+                                            }
+                                            className="flex justify-between py-1.5 px-1  hover:bg-gray-100 w-full"
+                                        >
                                             <span>Bookmark</span>{" "}
                                             <BookmarkIcon />
-                                        </li>
+                                        </button>
                                         <button className="flex justify-between py-1.5 px-1 hover:bg-gray-100  w-full">
                                             <span>Edit</span> <EditIcon />
                                         </button>

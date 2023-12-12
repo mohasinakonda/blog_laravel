@@ -29,7 +29,7 @@ Route::get('/dashboard', function () {
 
 Route::resource('blog', BlogController::class);
 Route::get('/search', SearchController::class)->name('search');
-Route::resource('user.blog.bookmark', BookmarkController::class)->scoped(['user', 'blog']);
+Route::resource('user.blog.bookmark', BookmarkController::class)->scoped(['user', 'blog'])->middleware(['auth', 'verified']);
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

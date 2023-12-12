@@ -28,13 +28,13 @@ class BookmarkController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(User $user, Blog $blog, Request $request)
+    public function store(Request $request)
     {
-        $data = $request->status;
+
         Bookmark::create([
-            'status' => $data,
-            'user_id' => $user->id,
-            'blog_id' => $blog->id
+            'status' => $request['status'],
+            'user_id' => $request['user_id'],
+            'blog_id' => $request['blog_id'],
         ]);
         return response([
             'status' => true,
@@ -63,7 +63,7 @@ class BookmarkController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+
     }
 
     /**
