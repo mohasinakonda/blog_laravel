@@ -1,7 +1,6 @@
 <?php
 
-use App\Models\Blog;
-use App\Models\User;
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -14,8 +13,8 @@ return new class extends Migration {
     {
         Schema::create('bookmarks', function (Blueprint $table) {
             $table->id();
-            $table->boolean('status')->nullable();
-            $table->foreignId('blog_id')->constrained();
+            $table->boolean('status');
+            $table->foreignId('blog_id')->constrained('blogs');
             $table->foreignId('user_id')->constrained();
             $table->timestamps();
         });

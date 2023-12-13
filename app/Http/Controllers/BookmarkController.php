@@ -6,6 +6,7 @@ use App\Models\Blog;
 use App\Models\Bookmark;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class BookmarkController extends Controller
 {
@@ -30,10 +31,16 @@ class BookmarkController extends Controller
      */
     public function store(Request $request)
     {
+        $user = Auth::user();
 
-        Bookmark::create([
+        if ($user->bookmark()->where('blog_id', $request['blog_id'])->exists()) {
+            return response([
+                'status' => false,
+                'message' => 'Blog post is already bookmarked by the user.'
+            ]);
+        }
+        $user->bookmark()->create([
             'status' => $request['status'],
-            'user_id' => $request['user_id'],
             'blog_id' => $request['blog_id'],
         ]);
         return response([

@@ -1,3 +1,4 @@
+import { BookmarkFilled } from "@/Components/icons/bookmark-filled";
 import { BookmarkIcon } from "@/Components/icons/bookmark-icon";
 import { ChatIcon } from "@/Components/icons/chat";
 import { CopyToClipboardIcon } from "@/Components/icons/copy-to-clipboard-icon";
@@ -5,7 +6,7 @@ import { EditIcon } from "@/Components/icons/edit-icon";
 import { ThreeDots } from "@/Components/icons/three-dots";
 import { TrashIcon } from "@/Components/icons/trash-icon";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
-import { Blog as BlogProps, User } from "@/types/blog-type";
+import { Blog as BlogProps, BookMark, User } from "@/types/blog-type";
 import { Link } from "@inertiajs/react";
 import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
@@ -13,6 +14,7 @@ type Props = {
     auth: {
         user: User;
     };
+    bookmark: number[];
     blogs: {
         data: BlogProps[];
         prev_page_url: string;
@@ -21,7 +23,8 @@ type Props = {
         last_page: number;
     };
 };
-const Blog = ({ auth, blogs }: Props) => {
+const Blog = ({ auth, blogs, bookmark }: Props) => {
+    console.log(bookmark);
     const [showActionId, setShowActionId] = useState<number | string>("");
 
     const actionRef = useRef<HTMLDivElement | null>(null);
@@ -66,6 +69,7 @@ const Blog = ({ auth, blogs }: Props) => {
 
         console.log(response.data);
     };
+    console.log(bookmark);
     return (
         <Authenticated user={auth.user}>
             <div className="max-w-2xl mx-auto">
@@ -147,8 +151,17 @@ const Blog = ({ auth, blogs }: Props) => {
                                             }
                                             className="flex justify-between py-1.5 px-1  hover:bg-gray-100 w-full"
                                         >
-                                            <span>Bookmark</span>{" "}
-                                            <BookmarkIcon />
+                                            {bookmark.includes(blog.id) ? (
+                                                <>
+                                                    <span>Bookmarked</span>
+                                                    <BookmarkFilled />
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <span>Bookmark</span>
+                                                    <BookmarkIcon />
+                                                </>
+                                            )}
                                         </button>
                                         <button className="flex justify-between py-1.5 px-1 hover:bg-gray-100  w-full">
                                             <span>Edit</span> <EditIcon />

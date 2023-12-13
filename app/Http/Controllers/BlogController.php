@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Blog;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class BlogController extends Controller
@@ -14,14 +15,16 @@ class BlogController extends Controller
      */
     public function index(User $user)
     {
+        $loggedInUser = Auth::user();
         $data = Blog::with('user')->withCount('comment')->withAvg('comment', 'rating')->paginate(10);
 
+        $userBookmark = $loggedInUser ? $loggedInUser->bookmark()->pluck('blog_id') : [];
         return inertia::render('Blog', [
             'blogs' => $data,
             'user' => $user,
+            'bookmark' => $userBookmark
         ]);
     }
-
     /**
      * Show the form for creating a new resource.
      */
