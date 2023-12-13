@@ -24,9 +24,8 @@ type Props = {
     };
 };
 const Blog = ({ auth, blogs, bookmark }: Props) => {
-    console.log(bookmark);
     const [showActionId, setShowActionId] = useState<number | string>("");
-
+    const [bookmarks, setBookmarks] = useState<number[]>(bookmark ?? []);
     const actionRef = useRef<HTMLDivElement | null>(null);
     const rating = (rating: number) => {
         const ratingToNumber = Math.round(rating);
@@ -67,9 +66,11 @@ const Blog = ({ auth, blogs, bookmark }: Props) => {
             }
         );
 
-        console.log(response.data);
+        if (response.status === 200) {
+            setBookmarks((prev) => [...prev, blog_id]);
+        }
     };
-    console.log(bookmark);
+
     return (
         <Authenticated user={auth.user}>
             <div className="max-w-2xl mx-auto">
@@ -151,7 +152,7 @@ const Blog = ({ auth, blogs, bookmark }: Props) => {
                                             }
                                             className="flex justify-between py-1.5 px-1  hover:bg-gray-100 w-full"
                                         >
-                                            {bookmark.includes(blog.id) ? (
+                                            {bookmarks.includes(blog.id) ? (
                                                 <>
                                                     <span>Bookmarked</span>
                                                     <BookmarkFilled />
