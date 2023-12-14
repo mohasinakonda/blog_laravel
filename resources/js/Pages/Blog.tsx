@@ -108,8 +108,17 @@ const Blog = ({ auth, blogs, bookmark }: Props) => {
                     blogData.data.map((blog: BlogProps) => (
                         <div key={blog.id} className="relative group">
                             <div className="p-5 mt-5 bg-white shadow">
-                                <h2 className="flex justify-between py-4 text-xl font-medium">
-                                    {blog.title}
+                                <div className="flex justify-between">
+                                    <h2 className="flex items-center gap-2 text-xl font-medium">
+                                        {blog.title}{" "}
+                                        <span>
+                                            {bookmarks.includes(blog.id) && (
+                                                <>
+                                                    <BookmarkFilled />
+                                                </>
+                                            )}
+                                        </span>
+                                    </h2>
                                     <button
                                         onClick={() =>
                                             setShowActionId((prev) =>
@@ -120,7 +129,7 @@ const Blog = ({ auth, blogs, bookmark }: Props) => {
                                     >
                                         <ThreeDots />
                                     </button>
-                                </h2>
+                                </div>
                                 by -<cite>{blog.user.name}</cite>
                                 <p>
                                     Published{" "}
