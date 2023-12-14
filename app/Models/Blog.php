@@ -19,6 +19,6 @@ class Blog extends Model
     }
     public function bookmark()
     {
-        return $this->belongsTo(Bookmark::class);
+        return $this->belongsToMany(User::class, 'bookmarks');
     }
 }

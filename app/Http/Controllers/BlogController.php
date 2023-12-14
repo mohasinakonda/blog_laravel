@@ -13,17 +13,34 @@ class BlogController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(User $user)
+    public function index(User $user, Request $request)
     {
+        $bookmarkQuery = $request['query'];
         $loggedInUser = Auth::user();
-        $data = Blog::with('user')->withCount('comment')->withAvg('comment', 'rating')->paginate(10);
+
 
         $userBookmark = $loggedInUser ? $loggedInUser->bookmark()->pluck('blog_id') : [];
-        return inertia::render('Blog', [
-            'blogs' => $data,
-            'user' => $user,
-            'bookmark' => $userBookmark
-        ]);
+
+        if ($bookmarkQuery === 'bookmarked') {
+
+            $data = Blog::whereIn('id', $userBookmark)->with('user')->withCount('comment')->withAvg('comment', 'rating')->paginate(10);
+            return response([
+                'blogs' => $data,
+                'user' => $user,
+                'bookmark' => $userBookmark
+            ]);
+
+        } else {
+            $data = Blog::with('user')->withCount('comment')->withAvg('comment', 'rating')->paginate(10);
+            return inertia::render('Blog', [
+                'blogs' => $data,
+                'user' => $user,
+                'bookmark' => $userBookmark
+            ]);
+        }
+
+
+
     }
     /**
      * Show the form for creating a new resource.
@@ -80,3 +97,6 @@ class BlogController extends Controller
         //
     }
 }
+
+
+

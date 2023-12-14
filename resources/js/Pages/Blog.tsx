@@ -3,6 +3,7 @@ import { BookmarkIcon } from "@/Components/icons/bookmark-icon";
 import { ChatIcon } from "@/Components/icons/chat";
 import { CopyToClipboardIcon } from "@/Components/icons/copy-to-clipboard-icon";
 import { EditIcon } from "@/Components/icons/edit-icon";
+import { FilterIcon } from "@/Components/icons/filter-icon";
 import { ThreeDots } from "@/Components/icons/three-dots";
 import { TrashIcon } from "@/Components/icons/trash-icon";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
@@ -10,22 +11,25 @@ import { Blog as BlogProps, BookMark, User } from "@/types/blog-type";
 import { Link } from "@inertiajs/react";
 import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
+type BlogData = {
+    data: BlogProps[];
+    prev_page_url: string;
+    next_page_url: string;
+    current_page: number;
+    last_page: number;
+};
 type Props = {
     auth: {
         user: User;
     };
     bookmark: number[];
-    blogs: {
-        data: BlogProps[];
-        prev_page_url: string;
-        next_page_url: string;
-        current_page: number;
-        last_page: number;
-    };
+    blogs: BlogData;
 };
 const Blog = ({ auth, blogs, bookmark }: Props) => {
+    const [blogData, setBlogData] = useState<BlogData>(blogs ?? []);
     const [showActionId, setShowActionId] = useState<number | string>("");
     const [bookmarks, setBookmarks] = useState<number[]>(bookmark ?? []);
+    const [showBookmarks, setShowBookmarks] = useState<boolean>(false);
     const actionRef = useRef<HTMLDivElement | null>(null);
     const rating = (rating: number) => {
         const ratingToNumber = Math.round(rating);
@@ -70,12 +74,38 @@ const Blog = ({ auth, blogs, bookmark }: Props) => {
             setBookmarks((prev) => [...prev, blog_id]);
         }
     };
-
+    const showBookmarked = async () => {
+        const response = await axios.get(
+            route("blog.index") + "?query=bookmarked"
+        );
+        const data = response.data;
+        const blogData = {
+            data: data.blogs.data,
+            prev_page_url: data.blogs.prev_page_url,
+            next_page_url: data.blogs.next_page_url,
+            current_page: data.blogs.current_page,
+            last_page: data.blogs.last_page,
+        };
+        setBlogData(blogData);
+    };
     return (
         <Authenticated user={auth.user}>
-            <div className="max-w-2xl mx-auto">
-                {blogs.data.length > 0 &&
-                    blogs.data.map((blog: BlogProps) => (
+            <div className="relative max-w-2xl mx-auto">
+                <button
+                    onClick={() => setShowBookmarks(!showBookmarks)}
+                    className="flex gap-1 px-4 py-1 mt-5 border border-gray-600 rounded"
+                >
+                    filter <FilterIcon />
+                </button>
+                {showBookmarks && (
+                    <div className="z-10 w-full p-5 bg-white border rounded top-9">
+                        <button onClick={showBookmarked}>
+                            show bookmarks blogs
+                        </button>
+                    </div>
+                )}
+                {blogData.data.length > 0 &&
+                    blogData.data.map((blog: BlogProps) => (
                         <div key={blog.id} className="relative group">
                             <div className="p-5 mt-5 bg-white shadow">
                                 <h2 className="flex justify-between py-4 text-xl font-medium">
@@ -178,23 +208,25 @@ const Blog = ({ auth, blogs, bookmark }: Props) => {
                 <div className="flex justify-center gap-1 py-5">
                     <Link
                         className={`underline hover:no-underline
-                        ${blogs.prev_page_url === null ? "" : "font-bold"}`}
-                        href={blogs.prev_page_url}
+                        ${blogData.prev_page_url === null ? "" : "font-bold"}`}
+                        href={blogData.prev_page_url}
                     >
                         Prev
                     </Link>
                     <p>
-                        <span className="font-bold">{blogs.current_page}/</span>
-                        {blogs.last_page}
+                        <span className="font-bold">
+                            {blogData.current_page}/
+                        </span>
+                        {blogData.last_page}
                     </p>
                     <Link
                         className={`underline hover:no-underline
                                ${
-                                   blogs.next_page_url === null
+                                   blogData.next_page_url === null
                                        ? ""
                                        : "font-bold"
                                }`}
-                        href={blogs.next_page_url}
+                        href={blogData.next_page_url}
                     >
                         Next
                     </Link>
