@@ -79,7 +79,7 @@ const Blog = ({ auth, blogs, bookmark }: Props) => {
             const bookmarkedId = bookmarks.find(
                 (bookmark) => bookmark.blog_id === blog_id
             )?.id;
-            console.log(bookmarkedId);
+
             const response = await axios.delete(
                 `/user/${user_id}/blog/${blog_id}/bookmark/${bookmarkedId}`
             );
@@ -107,8 +107,7 @@ const Blog = ({ auth, blogs, bookmark }: Props) => {
         );
 
         setBookmarked(bookmarkedBlog);
-    }, []);
-
+    }, [blogData]);
     return (
         <Authenticated user={auth.user}>
             <div className="relative max-w-2xl mx-auto">
