@@ -19,11 +19,12 @@ class BlogController extends Controller
         $loggedInUser = Auth::user();
 
 
-        $userBookmark = $loggedInUser ? $loggedInUser->bookmark()->pluck('blog_id') : [];
+        $userBookmark = $loggedInUser ? $loggedInUser->bookmark()->get() : [];
+        $userBookmarkedId = $loggedInUser ? $loggedInUser->bookmark()->pluck('blog_id') : [];
 
         if ($bookmarkQuery === 'bookmarked') {
 
-            $data = Blog::whereIn('id', $userBookmark)->with('user')->withCount('comment')->withAvg('comment', 'rating')->paginate(10);
+            $data = Blog::whereIn('id', $userBookmarkedId)->with('user')->withCount('comment')->withAvg('comment', 'rating')->paginate(10);
             return response([
                 'blogs' => $data,
                 'user' => $user,

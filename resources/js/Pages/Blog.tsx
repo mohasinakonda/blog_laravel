@@ -22,14 +22,15 @@ type Props = {
     auth: {
         user: User;
     };
-    bookmark: number[];
+    bookmark: BookMark[];
     blogs: BlogData;
 };
 const Blog = ({ auth, blogs, bookmark }: Props) => {
     const [blogData, setBlogData] = useState<BlogData>(blogs ?? []);
     const [showActionId, setShowActionId] = useState<number | string>("");
-    const [bookmarks, setBookmarks] = useState<number[]>(bookmark ?? []);
+    const [bookmarks, setBookmarks] = useState<BookMark[]>(bookmark ?? []);
     const [showBookmarks, setShowBookmarks] = useState<boolean>(false);
+    const [bookmarked, setBookmarked] = useState<boolean[]>([]);
     const actionRef = useRef<HTMLDivElement | null>(null);
     const rating = (rating: number) => {
         const ratingToNumber = Math.round(rating);
@@ -60,18 +61,28 @@ const Blog = ({ auth, blogs, bookmark }: Props) => {
     const handleBookMark = async (
         user_id: number,
         blog_id: number,
-        status?: boolean
+        index: number,
+        status: boolean
     ) => {
-        const data = { user_id, blog_id, status: status ? false : true };
-        const response = await axios.post(
-            `/user/${user_id}/blog/${blog_id}/bookmark`,
-            {
-                ...data,
-            }
+        setBookmarked((prev) =>
+            prev.map((item, i) => (i === index ? status : item))
         );
-
-        if (response.status === 200) {
-            setBookmarks((prev) => [...prev, blog_id]);
+        const data = { user_id, blog_id, status };
+        if (status) {
+            const response = await axios.post(
+                `/user/${user_id}/blog/${blog_id}/bookmark/`,
+                {
+                    ...data,
+                }
+            );
+        } else {
+            const bookmarkedId = bookmarks.find(
+                (bookmark) => bookmark.blog_id === blog_id
+            )?.id;
+            console.log(bookmarkedId);
+            const response = await axios.delete(
+                `/user/${user_id}/blog/${blog_id}/bookmark/${bookmarkedId}`
+            );
         }
     };
     const showBookmarked = async () => {
@@ -88,6 +99,16 @@ const Blog = ({ auth, blogs, bookmark }: Props) => {
         };
         setBlogData(blogData);
     };
+    useEffect(() => {
+        const bookmarkedBlogId = bookmarks.map((bookmark) => bookmark.blog_id);
+        const blogId = blogData.data.map((blog) => blog.id);
+        const bookmarkedBlog = blogId.map((id) =>
+            bookmarkedBlogId.includes(id)
+        );
+
+        setBookmarked(bookmarkedBlog);
+    }, []);
+    console.log(bookmarked);
     return (
         <Authenticated user={auth.user}>
             <div className="relative max-w-2xl mx-auto">
@@ -105,14 +126,14 @@ const Blog = ({ auth, blogs, bookmark }: Props) => {
                     </div>
                 )}
                 {blogData.data.length > 0 &&
-                    blogData.data.map((blog: BlogProps) => (
+                    blogData.data.map((blog: BlogProps, index) => (
                         <div key={blog.id} className="relative group">
                             <div className="p-5 mt-5 bg-white shadow">
                                 <div className="flex justify-between">
                                     <h2 className="flex items-center gap-2 text-xl font-medium">
                                         {blog.title}{" "}
                                         <span>
-                                            {bookmarks.includes(blog.id) && (
+                                            {bookmarked[index] && (
                                                 <>
                                                     <BookmarkFilled />
                                                 </>
@@ -181,17 +202,27 @@ const Blog = ({ auth, blogs, bookmark }: Props) => {
                                             <span>Copy URL</span>{" "}
                                             <CopyToClipboardIcon />
                                         </button>
-                                        <button
-                                            onClick={() =>
+
+                                        <input
+                                            type="checkbox"
+                                            onChange={(event) =>
                                                 handleBookMark(
                                                     blog.user_id,
                                                     blog.id,
-                                                    blog?.bookmark?.status
+                                                    index,
+                                                    event.target.checked
                                                 )
                                             }
-                                            className="flex justify-between py-1.5 px-1  hover:bg-gray-100 w-full"
+                                            checked={bookmarked[index]}
+                                            className="hidden"
+                                            name=""
+                                            id="bookmark"
+                                        />
+                                        <label
+                                            htmlFor="bookmark"
+                                            className="flex justify-between py-1.5 px-1  hover:bg-gray-100 w-full cursor-pointer"
                                         >
-                                            {bookmarks.includes(blog.id) ? (
+                                            {bookmarked[index] ? (
                                                 <>
                                                     <span>Bookmarked</span>
                                                     <BookmarkFilled />
@@ -202,7 +233,7 @@ const Blog = ({ auth, blogs, bookmark }: Props) => {
                                                     <BookmarkIcon />
                                                 </>
                                             )}
-                                        </button>
+                                        </label>
                                         <button className="flex justify-between py-1.5 px-1 hover:bg-gray-100  w-full">
                                             <span>Edit</span> <EditIcon />
                                         </button>
@@ -263,3 +294,6 @@ const Blog = ({ auth, blogs, bookmark }: Props) => {
 };
 
 export default Blog;
+
+const blogId = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+const bookmarkedBlogId = [1, 2, 10];

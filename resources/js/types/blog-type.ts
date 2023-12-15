@@ -13,6 +13,7 @@ export type Comment = {
     user: User;
 };
 export type BookMark = {
+    id: number;
     user_id: number;
     blog_id: number;
     status?: boolean | undefined;
