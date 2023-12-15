@@ -108,7 +108,7 @@ const Blog = ({ auth, blogs, bookmark }: Props) => {
 
         setBookmarked(bookmarkedBlog);
     }, []);
-    console.log(bookmarked);
+
     return (
         <Authenticated user={auth.user}>
             <div className="relative max-w-2xl mx-auto">
@@ -205,14 +205,15 @@ const Blog = ({ auth, blogs, bookmark }: Props) => {
 
                                         <input
                                             type="checkbox"
-                                            onChange={(event) =>
+                                            disabled={auth.user == null}
+                                            onChange={(event) => {
                                                 handleBookMark(
                                                     blog.user_id,
                                                     blog.id,
                                                     index,
                                                     event.target.checked
-                                                )
-                                            }
+                                                );
+                                            }}
                                             checked={bookmarked[index]}
                                             className="hidden"
                                             name=""
@@ -220,7 +221,11 @@ const Blog = ({ auth, blogs, bookmark }: Props) => {
                                         />
                                         <label
                                             htmlFor="bookmark"
-                                            className="flex justify-between py-1.5 px-1  hover:bg-gray-100 w-full cursor-pointer"
+                                            className={`flex justify-between py-1.5 px-1 hover:bg-gray-100 w-full cursor-pointer ${
+                                                auth.user == null
+                                                    ? "opacity-50 cursor-not-allowed"
+                                                    : ""
+                                            }`}
                                         >
                                             {bookmarked[index] ? (
                                                 <>
