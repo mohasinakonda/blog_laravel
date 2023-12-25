@@ -95,7 +95,20 @@ class BlogController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $user = Auth::user();
+        $blog = Blog::find($id);
+        if ($user->id === $blog->user_id) {
+            $blog->delete();
+            return response([
+                'status' => true,
+                'message' => 'blog post has been deleted!'
+            ]);
+        } else {
+            return response([
+                'status' => false,
+
+            ]);
+        }
     }
 }
 

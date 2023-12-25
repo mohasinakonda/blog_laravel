@@ -108,6 +108,19 @@ const Blog = ({ auth, blogs, bookmark }: Props) => {
 
         setBookmarked(bookmarkedBlog);
     }, [blogData]);
+
+    const handleDeletePost = async (blog_id: number) => {
+        const response = await axios.delete(`/blog/${blog_id}`);
+        if (response.data.status) {
+            const newBlogData = blogData.data.filter(
+                (blog) => blog.id !== blog_id
+            );
+            setBlogData((prev) => ({
+                ...prev,
+                data: newBlogData,
+            }));
+        }
+    };
     return (
         <Authenticated user={auth.user}>
             <div className="relative max-w-2xl mx-auto">
@@ -241,7 +254,19 @@ const Blog = ({ auth, blogs, bookmark }: Props) => {
                                         <button className="flex justify-between py-1.5 px-1 hover:bg-gray-100  w-full">
                                             <span>Edit</span> <EditIcon />
                                         </button>
-                                        <button className="flex justify-between py-1.5 px-1 text-red-300 hover:bg-gray-100 w-full">
+                                        <button
+                                            disabled={
+                                                auth.user.id !== blog.user_id
+                                            }
+                                            onClick={() =>
+                                                handleDeletePost(blog.id)
+                                            }
+                                            className={`flex justify-between py-1.5 px-1 text-red-300 hover:bg-gray-100 w-full ${
+                                                auth.user.id !== blog.user_id
+                                                    ? "opacity-50 cursor-not-allowed"
+                                                    : ""
+                                            }`}
+                                        >
                                             <span>Delete</span> <TrashIcon />
                                         </button>
                                     </ul>
