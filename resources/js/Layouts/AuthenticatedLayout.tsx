@@ -7,6 +7,7 @@ import { Link, router } from "@inertiajs/react";
 import { User } from "@/types";
 import { Blog } from "@/types/blog-type";
 import { ThreeDotFade } from "@/Components/icons/three-dot-fade";
+import axios from "axios";
 
 export default function Authenticated({
     user,
@@ -37,6 +38,27 @@ export default function Authenticated({
             );
         } else {
             setSearchResult([]);
+        }
+    };
+    const handleCreatePost = () => {
+        const title = localStorage.getItem("title");
+        const description = localStorage.getItem("description");
+        const data = {
+            title,
+            description,
+            user_id: user?.id,
+            excerpt: description?.slice(0, 100),
+        };
+        if (title && description) {
+            axios
+                .post("/blog", { ...data })
+
+                .then((data) => {
+                    if (data.data.status) {
+                        localStorage.removeItem("title");
+                        localStorage.removeItem("description");
+                    }
+                });
         }
     };
 
@@ -121,12 +143,21 @@ export default function Authenticated({
                             <div className="relative ms-3">
                                 {user !== null && (
                                     <div className="flex gap-4">
-                                        <Link
-                                            href={route("blog.create")}
-                                            className="px-4 py-2 border rounded"
-                                        >
-                                            Write a Post
-                                        </Link>
+                                        {location.pathname == "/blog/create" ? (
+                                            <button
+                                                onClick={handleCreatePost}
+                                                className="px-4 py-2 text-white bg-gray-700 border rounded"
+                                            >
+                                                Publish
+                                            </button>
+                                        ) : (
+                                            <Link
+                                                href={route("blog.create")}
+                                                className="px-4 py-2 border rounded"
+                                            >
+                                                Write a Post
+                                            </Link>
+                                        )}
 
                                         <Dropdown>
                                             <Dropdown.Trigger>

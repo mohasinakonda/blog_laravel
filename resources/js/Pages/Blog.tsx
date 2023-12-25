@@ -175,8 +175,13 @@ const Blog = ({ auth, blogs, bookmark }: Props) => {
                                 <div className="text-orange-300">
                                     {rating(blog.comment_avg_rating)}
                                 </div>
-                                <p className="py-5 text-gray-500">
-                                    {blog.excerpt}
+                                <article className="py-5 text-gray-500">
+                                    <div
+                                        dangerouslySetInnerHTML={{
+                                            __html: blog.excerpt,
+                                        }}
+                                        className="prose max-w-none"
+                                    />
                                     {"... "}
                                     <Link
                                         href={`/blog/${blog.id}`}
@@ -184,7 +189,7 @@ const Blog = ({ auth, blogs, bookmark }: Props) => {
                                     >
                                         read more
                                     </Link>
-                                </p>
+                                </article>
                                 <div className="flex gap-1">
                                     <ChatIcon />
                                     <Link

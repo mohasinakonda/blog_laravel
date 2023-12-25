@@ -24,7 +24,7 @@ class BlogController extends Controller
 
         if ($bookmarkQuery === 'bookmarked') {
 
-            $data = Blog::whereIn('id', $userBookmarkedId)->with('user')->withCount('comment')->withAvg('comment', 'rating')->paginate(10);
+            $data = Blog::whereIn('id', $userBookmarkedId)->with('user')->withCount('comment')->withAvg('comment', 'rating')->latest('created_at')->paginate(10);
             return response([
                 'blogs' => $data,
                 'user' => $user,
@@ -32,7 +32,7 @@ class BlogController extends Controller
             ]);
 
         } else {
-            $data = Blog::with('user')->withCount('comment')->withAvg('comment', 'rating')->paginate(10);
+            $data = Blog::with('user')->withCount('comment')->withAvg('comment', 'rating')->latest()->paginate(10);
             return inertia::render('Blog', [
                 'blogs' => $data,
                 'user' => $user,
@@ -58,7 +58,24 @@ class BlogController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $user = Auth::user();
+        if ($user->id === $request->user_id) {
+            $user->blogs()->create([
+                'title' => $request->title,
+                'description' => $request->description,
+                'excerpt' => $request->excerpt,
+
+            ]);
+
+        } else {
+            return response([
+                'message' => 'something went wrong,please try again!'
+            ]);
+        }
+        return response([
+            'status' => true,
+            'message' => 'blog successfully published'
+        ]);
     }
 
     /**

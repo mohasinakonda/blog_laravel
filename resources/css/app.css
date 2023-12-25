@@ -1,3 +1,15 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.ql-toolbar {
+    position: sticky;
+    top: 60px;
+    height: 44px;
+    left: 0;
+    border: none !important;
+    z-index: 100;
+}
+.ql-container.ql-snow {
+    border: none !important;
+}
