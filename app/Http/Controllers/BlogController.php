@@ -48,7 +48,9 @@ class BlogController extends Controller
      */
     public function create()
     {
-        //
+        return Inertia('add-blog', [
+            'user' => Auth::user()
+        ]);
     }
 
     /**

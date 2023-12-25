@@ -121,9 +121,12 @@ export default function Authenticated({
                             <div className="relative ms-3">
                                 {user !== null && (
                                     <div className="flex gap-4">
-                                        <button className="px-4 py-2 border rounded">
+                                        <Link
+                                            href={route("blog.create")}
+                                            className="px-4 py-2 border rounded"
+                                        >
                                             Write a Post
-                                        </button>
+                                        </Link>
 
                                         <Dropdown>
                                             <Dropdown.Trigger>
