@@ -25,6 +25,7 @@
         "vite": "^4.0.0"
     },
     "dependencies": {
-        "framer-motion": "^10.16.12"
+        "framer-motion": "^10.16.12",
+        "react-quill": "^2.0.0"
     }
 }
