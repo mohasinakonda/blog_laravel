@@ -1,14 +1,18 @@
+import { AddCommentModal } from "@/Components/blog/add-comment-modal";
 import { ChatIcon } from "@/Components/icons/chat";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import { Blog, Comment, User } from "@/types/blog-type";
 import { Link } from "@inertiajs/react";
+import { useState } from "react";
 
 type BlogWithUser = Blog & {
     user: User;
 };
 
 type Props = {
-    auth: User;
+    auth: {
+        user: User;
+    };
 
     blog: BlogWithUser;
     comments: {
@@ -20,6 +24,7 @@ type Props = {
     };
 };
 const Content = ({ auth, blog, comments }: Props) => {
+    const [showCommentModal, setShowCommentModal] = useState(false);
     const rating = (rating: number) => {
         const roundedRating = Math.round(rating);
         let stars = "";
@@ -33,7 +38,7 @@ const Content = ({ auth, blog, comments }: Props) => {
         return stars;
     };
     return (
-        <Authenticated>
+        <Authenticated user={auth.user}>
             <div className="min-h-screen mx-auto bg-gray-100">
                 <div className="max-w-2xl px-5 pt-20 mx-auto bg-white ">
                     <h2 className="py-5 text-3xl">{blog.title}</h2>
@@ -56,8 +61,19 @@ const Content = ({ auth, blog, comments }: Props) => {
                         </p>
                     </div>
 
-                    <p className="pt-10 ">{blog.description}</p>
-                    <h2 className="py-5 text-2xl">Comments</h2>
+                    <p
+                        dangerouslySetInnerHTML={{ __html: blog.description }}
+                        className="pt-10 "
+                    />
+                    <div className="flex justify-between">
+                        <h2 className="py-5 text-2xl">Comments</h2>
+                        <button
+                            className="underline"
+                            onClick={() => setShowCommentModal(true)}
+                        >
+                            Add comment
+                        </button>
+                    </div>
                     {comments.data.map((comment) => (
                         <div
                             key={comment.id}
@@ -99,6 +115,14 @@ const Content = ({ auth, blog, comments }: Props) => {
                         </Link>
                     </div>
                 </div>
+                {showCommentModal && (
+                    <AddCommentModal
+                        blog_id={blog.id}
+                        user={auth.user}
+                        show={showCommentModal}
+                        onClose={() => setShowCommentModal(false)}
+                    />
+                )}
             </div>
         </Authenticated>
     );

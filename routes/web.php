@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\BookmarkController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SearchController;
 use Illuminate\Foundation\Application;
@@ -28,6 +29,7 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::resource('blog', BlogController::class);
+Route::resource('user.blog.comment', CommentController::class);
 Route::get('/search', SearchController::class)->name('search');
 Route::resource('user.blog.bookmark', BookmarkController::class)->scoped(['user', 'blog'])->middleware(['auth', 'verified']);
 
