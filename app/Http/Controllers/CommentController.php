@@ -36,7 +36,7 @@ class CommentController extends Controller
         if ($user->id === $request->user_id && $blog->id === $request->blog_id) {
             // dd($request->blog_id);
             $user->comment()->create([
-                'blog_id' => 99,
+                'blog_id' => $request->blog_id,
                 'comment' => $request->comment,
                 'rating' => $request->rating,
 
