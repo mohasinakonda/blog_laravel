@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Blog;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class CommentController extends Controller
 {
@@ -27,7 +29,25 @@ class CommentController extends Controller
      */
     public function store(Request $request)
     {
-        //
+
+        $user = Auth::user();
+        $blog = Blog::find($request->blog_id);
+
+        if ($user->id === $request->user_id && $blog->id === $request->blog_id) {
+            // dd($request->blog_id);
+            $user->comment()->create([
+                'blog_id' => 99,
+                'comment' => $request->comment,
+                'rating' => $request->rating,
+
+            ]);
+        } else {
+            return response([
+                'status' => false,
+                'message' => 'something went wrong!'
+            ]);
+        }
+        return redirect()->route('blog.show', ['blog' => $blog]);
     }
 
     /**
