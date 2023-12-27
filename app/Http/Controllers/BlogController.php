@@ -102,7 +102,13 @@ class BlogController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $blog = Blog::find($id);
+        return Inertia('add-blog',
+            [
+                'blog' => $blog,
+                'user' => Auth::user()
+            ]
+        );
     }
 
     /**
@@ -110,7 +116,24 @@ class BlogController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $user = Auth::user();
+        $blog = Blog::find($id);
+        if ($user->id === $blog->user_id) {
+            $blog->update([
+                'title' => $request->title,
+                'description' => $request->description,
+                'excerpt' => $request->excerpt,
+            ]);
+        } else {
+            return response([
+                'status' => false,
+                'message' => 'something went wrong'
+            ]);
+        }
+        return response([
+            'status' => true,
+            'message' => 'updated'
+        ]);
     }
 
     /**

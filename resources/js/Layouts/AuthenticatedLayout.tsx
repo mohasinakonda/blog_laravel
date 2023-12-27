@@ -62,6 +62,30 @@ export default function Authenticated({
                 });
         }
     };
+    const pathname = location.pathname.split("/");
+    console.log(pathname);
+    const updateBlog = () => {
+        const title = localStorage.getItem("title");
+        const description = localStorage.getItem("description");
+        const data = {
+            title,
+            description,
+            user_id: user?.id,
+            excerpt: description?.slice(0, 100),
+        };
+        if (title && description) {
+            axios
+                .put(route("blog.update", { blog: pathname[2] }), { ...data })
+
+                .then((data) => {
+                    if (data.data.status) {
+                        localStorage.removeItem("title");
+                        localStorage.removeItem("description");
+                        router.visit("/blog");
+                    }
+                });
+        }
+    };
 
     return (
         <div className="min-h-screen bg-gray-100">
@@ -150,6 +174,13 @@ export default function Authenticated({
                                                 className="px-4 py-2 text-white bg-gray-700 border rounded"
                                             >
                                                 Publish
+                                            </button>
+                                        ) : pathname.includes("edit") ? (
+                                            <button
+                                                onClick={updateBlog}
+                                                className="px-4 py-2 text-white bg-gray-700 border rounded"
+                                            >
+                                                Update
                                             </button>
                                         ) : (
                                             <Link

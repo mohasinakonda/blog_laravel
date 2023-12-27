@@ -1,12 +1,14 @@
 import Authenticated from "@/Layouts/AuthenticatedLayout";
-import { User } from "@/types/blog-type";
+import { Blog, User } from "@/types/blog-type";
 import { useEffect, useState } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 type Props = {
     user: User;
+    blog?: Blog;
 };
-const AddBlog = ({ user }: Props) => {
+const AddBlog = ({ user, blog }: Props) => {
+    console.log(blog);
     const [value, setValue] = useState("");
     const [title, setTitle] = useState("");
 
@@ -17,6 +19,12 @@ const AddBlog = ({ user }: Props) => {
         if (title && description) {
             setValue(description);
             setTitle(title!);
+        }
+    }, []);
+    useEffect(() => {
+        if (blog) {
+            localStorage.setItem("description", blog.description);
+            localStorage.setItem("title", blog.title);
         }
     }, []);
     return (
