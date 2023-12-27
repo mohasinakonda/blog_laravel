@@ -261,13 +261,13 @@ const Blog = ({ auth, blogs, bookmark }: Props) => {
                                         </button>
                                         <button
                                             disabled={
-                                                auth.user.id !== blog.user_id
+                                                auth?.user?.id !== blog?.user_id
                                             }
                                             onClick={() =>
-                                                handleDeletePost(blog.id)
+                                                handleDeletePost(blog?.id)
                                             }
                                             className={`flex justify-between py-1.5 px-1 text-red-300 hover:bg-gray-100 w-full ${
-                                                auth.user.id !== blog.user_id
+                                                auth?.user?.id !== blog?.user_id
                                                     ? "opacity-50 cursor-not-allowed"
                                                     : ""
                                             }`}
