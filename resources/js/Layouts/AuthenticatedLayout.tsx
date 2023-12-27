@@ -57,6 +57,7 @@ export default function Authenticated({
                     if (data.data.status) {
                         localStorage.removeItem("title");
                         localStorage.removeItem("description");
+                        router.visit("/blog");
                     }
                 });
         }

@@ -14,7 +14,7 @@ const AddBlog = ({ user }: Props) => {
         const description = localStorage.getItem("description");
         const title = localStorage.getItem("title");
 
-        if (description) {
+        if (title && description) {
             setValue(description);
             setTitle(title!);
         }
@@ -25,9 +25,10 @@ const AddBlog = ({ user }: Props) => {
                 <div>
                     <input
                         value={title}
-                        onChange={(e) =>
-                            localStorage.setItem("title", e.target.value)
-                        }
+                        onChange={(e) => {
+                            setTitle(e.target.value);
+                            localStorage.setItem("title", e.target.value);
+                        }}
                         placeholder="title"
                         className="w-full h-10 mb-5 border border-gray-300 rounded focus:ring-0"
                     />
