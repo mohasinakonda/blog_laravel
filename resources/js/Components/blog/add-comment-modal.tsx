@@ -13,7 +13,7 @@ export const AddCommentModal = ({ onClose, show, blog_id, user }: Props) => {
     const { data, post, processing, setData } = useForm({
         rating: 0,
         comment: "",
-        user_id: user.id,
+        user_id: user?.id,
         blog_id: blog_id,
     });
 
