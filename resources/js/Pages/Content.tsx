@@ -67,12 +67,14 @@ const Content = ({ auth, blog, comments }: Props) => {
                     />
                     <div className="flex justify-between">
                         <h2 className="py-5 text-2xl">Comments</h2>
-                        <button
-                            className="underline"
-                            onClick={() => setShowCommentModal(true)}
-                        >
-                            Add comment
-                        </button>
+                        {auth.user && (
+                            <button
+                                className="underline"
+                                onClick={() => setShowCommentModal(true)}
+                            >
+                                Add comment
+                            </button>
+                        )}
                     </div>
                     {comments.data.map((comment) => (
                         <div
