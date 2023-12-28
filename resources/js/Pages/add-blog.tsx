@@ -8,21 +8,13 @@ type Props = {
     blog?: Blog;
 };
 const AddBlog = ({ user, blog }: Props) => {
-    console.log(blog);
     const [value, setValue] = useState("");
     const [title, setTitle] = useState("");
 
     useEffect(() => {
-        const description = localStorage.getItem("description");
-        const title = localStorage.getItem("title");
-
-        if (title && description) {
-            setValue(description);
-            setTitle(title!);
-        }
-    }, []);
-    useEffect(() => {
         if (blog) {
+            setValue(blog?.description!);
+            setTitle(blog?.title!);
             localStorage.setItem("description", blog.description);
             localStorage.setItem("title", blog.title);
         }
