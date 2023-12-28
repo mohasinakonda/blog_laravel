@@ -25,7 +25,10 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
+    $blogs = Auth::user()->blogs()->select('id', 'title')->withAvg('comment', 'rating')->withCount('comment')->latest()->paginate(10);
+    return Inertia::render('Dashboard', [
+        'blogs' => $blogs
+    ]);
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::resource('blog', BlogController::class);
