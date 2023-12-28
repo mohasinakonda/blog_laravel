@@ -103,6 +103,11 @@ class BlogController extends Controller
     public function edit(string $id)
     {
         $blog = Blog::find($id);
+        $user = Auth::user();
+
+        if ($blog->user_id !== $user->id) {
+            return redirect()->back();
+        }
         return Inertia('add-blog',
             [
                 'blog' => $blog,
